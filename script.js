@@ -28,7 +28,7 @@ let mouseDown = false;
 let pedalTurnedOn = false;
 let showPianoTurnedOn = false;
 let showRandomPlayingTechniqueTurnedOn = false;
-let rootNoteRange = 20;
+let rootNoteRange = 24; // Max distance of notes from middle C that can be played. The smaller it is, the more it'll stick to middle C, the higher, the more spread out it'll be. For example, setting it to 24 will allow the notes to reach C6 and C2 bot not beyond that. Even if the second note is just one semitone beyond this range, both notes will move an octave towards the center. (will not work that well with low numbers depending on the interval played)
 let noteDelay = 750; // in milliseconds
 let interval1TurnedOn = false;
 let interval2TurnedOn = false;
@@ -64,6 +64,9 @@ const noteNames = [
   'C8'
 ];
 
+const midC = 'C4';
+const midCNumber = noteNames.indexOf(midC);
+const octaveDistance = 12;
 let notes = [];
 
 noteNames.forEach(noteName => {
@@ -81,7 +84,7 @@ noteNames.forEach(noteName => {
   else {
     noteDiv.classList.add('white');
   }
-  if (noteName == 'C4') {
+  if (noteName == midC) {
     noteDiv.classList.add('middle-c');
   }
   piano.appendChild(noteDiv);
@@ -125,7 +128,7 @@ function getRandomInt(min, max) {
 }
 // how many notes from middle C (4) (one side, not including self) to consider when picking note
 function getRandomNote(noteRangeFromMidC) {
-  return notes[notes.indexOf(getNoteFromName('C4')) + getRandomInt(-noteRangeFromMidC, noteRangeFromMidC)];
+  return notes[notes.indexOf(getNoteFromName(midC)) + getRandomInt(-noteRangeFromMidC, noteRangeFromMidC)];
 }
 
 function getAvailableIntervals() {
@@ -287,6 +290,18 @@ function selectAndPlayInterval() {
   selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedRootNote) + selectedInterval); 
   if (Math.random() < 0.5) {
     selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedRootNote) - selectedInterval); 
+  }
+
+  // If selected second note is out of bounds, move both notes down an octave or up an octave
+  if (getNoteNumber(selectedSecondNote) > midCNumber + rootNoteRange) {
+    console.log('moving down an octave');
+    selectedRootNote = getNoteFromNumber(getNoteNumber(selectedRootNote) - octaveDistance);
+    selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedSecondNote) - octaveDistance);
+  }
+  else if (getNoteNumber(selectedSecondNote) < midCNumber - rootNoteRange) {
+    console.log('moving up an octave');
+    selectedRootNote = getNoteFromNumber(getNoteNumber(selectedRootNote) + octaveDistance);
+    selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedSecondNote) + octaveDistance);
   }
 
   // Select ascneding/descending playing order/technique (will only be used if random is selected)
