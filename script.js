@@ -199,8 +199,8 @@ function getIntervalNameFromNumber(interval) {
     10: 'Minor 7th',
     11: 'Major 7th',
     12: 'Octave',
-    13: 'Minor 8th',
-    14: 'Major 8th',
+    13: 'Minor 9th',
+    14: 'Major 9th',
   })[interval] ?? 'None';
 }
 
