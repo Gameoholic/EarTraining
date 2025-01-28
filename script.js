@@ -78,6 +78,9 @@ noteNames.forEach(noteName => {
   else {
     noteDiv.classList.add('white');
   }
+  if (noteName == 'C4') {
+    noteDiv.classList.add('middle-c');
+  }
   piano.appendChild(noteDiv);
 
   const note = {
@@ -87,8 +90,9 @@ noteNames.forEach(noteName => {
   };
   notes.push(note);
 
-  noteDiv.addEventListener('mousedown', () => playNote(note));
-  noteDiv.addEventListener('mouseenter', () => playNoteIfMouseDown(note));
+  // Force all notes to show the piano if played manually, even if piano is hidden
+  noteDiv.addEventListener('mousedown', () => playNote(note, true));
+  noteDiv.addEventListener('mouseenter', () => playNoteIfMouseDown(note, true));
   noteDiv.addEventListener('mouseup', () => stopNote(note));
   noteDiv.addEventListener('mouseleave', () => stopNote(note));
 });
@@ -302,7 +306,7 @@ intervalPlayButton.addEventListener('click', () => {
   }
 });
 
-// forceshowpiano - whether to force show the notes that are played, even if the setting is disabled. Usually used when interval was already guessed
+// forceshowpiano - whether to force show the notes that are played, even if the setting is disabled. Usually used when interval was already guessed or if pressing key manually
 async function playSelectedInterval(forceShowPiano = false) {
   let lowerNote = getNoteNumber(selectedSecondNote) > getNoteNumber(selectedRootNote) ? selectedRootNote : selectedSecondNote;
   let higherNote = getNoteNumber(selectedSecondNote) > getNoteNumber(selectedRootNote) ? selectedSecondNote : selectedRootNote;
@@ -510,9 +514,11 @@ function playNote(note, forceShowPiano = false) {
     stopNote(note);
   });
 }
-function playNoteIfMouseDown(note) { // Plays the note when mouse is "sliding" to other notes (holding)
+
+// Plays the note when mouse is "sliding" to other notes (holding)
+function playNoteIfMouseDown(note, forceShowPiano = false) {
   if (mouseDown) {
-    playNote(note);
+    playNote(note, forceShowPiano);
   }
 }
 function stopNote(note) {

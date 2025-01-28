@@ -39,6 +39,10 @@ body {
   border: 1px solid #333;
 }
 
+.white.middle-c {
+  background-color: rgb(255, 239, 239);
+}
+
 .white.active {
   background-color: #CCC;
 }
@@ -56,11 +60,11 @@ body {
 }
 
 .key.highlighted {
-  background-color: #79ff8d;
+  background-color: #00cf1f;
 }
 
 .key.highlighted.active {
-  background-color: #62cd72;
+  background-color: #00b81c;
 }
 
 
