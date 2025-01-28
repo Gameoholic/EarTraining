@@ -294,12 +294,10 @@ function selectAndPlayInterval() {
 
   // If selected second note is out of bounds, move both notes down an octave or up an octave
   if (getNoteNumber(selectedSecondNote) > midCNumber + rootNoteRange) {
-    console.log('moving down an octave');
     selectedRootNote = getNoteFromNumber(getNoteNumber(selectedRootNote) - octaveDistance);
     selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedSecondNote) - octaveDistance);
   }
   else if (getNoteNumber(selectedSecondNote) < midCNumber - rootNoteRange) {
-    console.log('moving up an octave');
     selectedRootNote = getNoteFromNumber(getNoteNumber(selectedRootNote) + octaveDistance);
     selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedSecondNote) + octaveDistance);
   }
