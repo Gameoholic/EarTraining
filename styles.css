@@ -25,6 +25,7 @@ body {
 #piano {
   display: flex;
   margin: 40px 40px 0px 0px;
+  justify-content: center;
 }
 
 .key {

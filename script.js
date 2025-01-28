@@ -1,5 +1,6 @@
 let piano = document.getElementById('piano');
 let pedalButton = document.getElementById('pedal');
+let playingTechniqueSelect = document.getElementById('playing-technique');
 let intervalStartButton = document.getElementById('interval-start-button');
 let intervalPlayButton = document.getElementById('interval-play-button');
 let intervalNextButton = document.getElementById('interval-next-button');
@@ -23,6 +24,7 @@ let interval14Button = document.getElementById('interval-14');
 let mouseDown = false;
 let pedalTurnedOn = false;
 let rootNoteRange = 20;
+let noteDelay = 750; // in milliseconds
 let interval1TurnedOn = false;
 let interval2TurnedOn = false;
 let interval3TurnedOn = false;
@@ -38,8 +40,10 @@ let interval12TurnedOn = false;
 let interval13TurnedOn = false;
 let interval14TurnedOn = false;
 
-let selectedRootNote = -1;
+let selectedRootNote;
+let selectedSecondNote;
 let selectedInterval = -1; 
+let selectedRandomPlayingTechnique = false; // ascneding/descending. only if selected to random playing technique
 
 
 // Init all notes
@@ -188,10 +192,6 @@ function getIntervalNameFromNumber(interval) {
   })[interval] ?? 'None';
 }
 
-// //test btn
-// document.getElementById('test').addEventListener('click', () => {
-//   playNoteIntervalWithDelayAndMode();
-// });
 
 // Pedal button
 pedalButton.addEventListener('click', () => {
@@ -241,9 +241,22 @@ function selectAndPlayInterval() {
   // Stop all playing sounds if there are any
   stopAllNotes();
 
-  // Select interval
+  // Select interval and notes
   selectedRootNote = getRandomNote(rootNoteRange);
   selectedInterval = getRandomInterval();
+  // Second note is randomly either above or below the root note with the selected interval
+  selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedRootNote) + selectedInterval); 
+  if (Math.random() < 0.5) {
+    selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedRootNote) - selectedInterval); 
+  }
+
+  // Select ascneding/descending playing order/technique (will only be used if random is selected)
+  selectedRandomPlayingTechnique = false;
+  if (Math.random() < 0.5) {
+    selectedRandomPlayingTechnique = true;
+  }
+  
+
   playSelectedInterval();
 
   intervalNextButton.style.display = "none";
@@ -265,10 +278,37 @@ intervalPlayButton.addEventListener('click', () => {
   }
 });
 
-function playSelectedInterval() {
-  playNote(selectedRootNote);
-  let nextNote = getNoteFromNumber(getNoteNumber(selectedRootNote) + selectedInterval); // ascending
-  playNote(nextNote);
+async function playSelectedInterval() {
+  let lowerNote = getNoteNumber(selectedSecondNote) > getNoteNumber(selectedRootNote) ? selectedRootNote : selectedSecondNote;
+  let higherNote = getNoteNumber(selectedSecondNote) > getNoteNumber(selectedRootNote) ? selectedSecondNote : selectedRootNote;
+  switch (playingTechniqueSelect.options[playingTechniqueSelect.selectedIndex].value) {
+    case 'ascending':
+      playNote(lowerNote);
+      await new Promise(r => setTimeout(r, noteDelay));
+      playNote(higherNote);
+      break;
+    case 'descending':
+      playNote(higherNote);
+      await new Promise(r => setTimeout(r, noteDelay));
+      playNote(lowerNote);
+      break;
+    case 'random':
+      if (selectedRandomPlayingTechnique) {
+        playNote(lowerNote);
+        await new Promise(r => setTimeout(r, noteDelay));
+        playNote(higherNote);
+      }
+      else {
+        playNote(higherNote);
+        await new Promise(r => setTimeout(r, noteDelay));
+        playNote(lowerNote);
+      }
+      break;
+    case 'harmonic':
+      playNote(lowerNote);
+      playNote(higherNote);
+      break;
+  }
 }
 
 // Interval guessed button clicked
@@ -281,6 +321,8 @@ function onGuessButtonClicked(intervalGuessButton, guessedInterval) {
     }
     intervalNextButton.style.display = "inline-block";
     selectedInterval = -1; // Reset
+    selectedRootNote;
+    selectedSecondNote;
   }
   else {
     intervalGuessButton.classList.add('incorrect');
