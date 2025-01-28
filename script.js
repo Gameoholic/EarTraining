@@ -251,8 +251,13 @@ function selectAndPlayInterval() {
     });
     intervalGuessButtonsDiv.appendChild(intervalGuessButton);
   });
-  // Stop all playing sounds if there are any
+  
+  // Stop all playing notes if there are any
   stopAllNotes();
+  // Unhighlight all highlighted notes
+  notes.forEach( note => {
+    note.div.classList.remove('highlighted');
+  });
 
   // Select interval and notes
   selectedRootNote = getRandomNote(rootNoteRange);
@@ -328,6 +333,9 @@ async function playSelectedInterval() {
 function onGuessButtonClicked(intervalGuessButton, guessedInterval) {
   if (guessedInterval == selectedInterval) {
     intervalGuessButton.classList.add('correct');
+    // Highlight notes
+    selectedRootNote.div.classList.add('highlighted');
+    selectedSecondNote.div.classList.add('highlighted');
     // Disable all buttons
     for (let guessButton of document.getElementsByClassName('interval-guess-button')) {
       guessButton.disabled = true;

@@ -55,6 +55,14 @@ body {
   background-color: #656565;
 }
 
+.key.highlighted {
+  background-color: #79ff8d;
+}
+
+.key.highlighted.active {
+  background-color: #62cd72;
+}
+
 
 .toggle-button {
   background-color: #77767a; /* Green */
