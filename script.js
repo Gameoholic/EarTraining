@@ -8,6 +8,7 @@ let intervalPlayButton = document.getElementById('interval-play-button');
 let intervalNextButton = document.getElementById('interval-next-button');
 let intervalGuessButtonsDiv = document.getElementById('interval-guess-buttons');
 let randomPlayingTechniqueDirection = document.getElementById('random-playing-technique-direction');
+let rootNodeRangeInput = document.getElementById('root-note-range'); // Max distance of notes from middle C that can be played. The smaller it is, the more it'll stick to middle C, the higher, the more spread out it'll be. For example, setting it to 24 will allow the notes to reach C6 and C2 bot not beyond that. Even if the second note is just one semitone beyond this range, both notes will move an octave towards the center. (will not work that well with low numbers depending on the interval played)
 let interval1Button = document.getElementById('interval-1');
 let interval2Button = document.getElementById('interval-2');
 let interval3Button = document.getElementById('interval-3');
@@ -28,7 +29,6 @@ let mouseDown = false;
 let pedalTurnedOn = false;
 let showPianoTurnedOn = false;
 let showRandomPlayingTechniqueTurnedOn = false;
-let rootNoteRange = 24; // Max distance of notes from middle C that can be played. The smaller it is, the more it'll stick to middle C, the higher, the more spread out it'll be. For example, setting it to 24 will allow the notes to reach C6 and C2 bot not beyond that. Even if the second note is just one semitone beyond this range, both notes will move an octave towards the center. (will not work that well with low numbers depending on the interval played)
 let noteDelay = 750; // in milliseconds
 let interval1TurnedOn = false;
 let interval2TurnedOn = false;
@@ -284,7 +284,7 @@ function selectAndPlayInterval() {
   randomPlayingTechniqueDirection.style.opacity = 0;
 
   // Select interval and notes
-  selectedRootNote = getRandomNote(rootNoteRange);
+  selectedRootNote = getRandomNote(rootNodeRangeInput.value);
   selectedInterval = getRandomInterval();
   // Second note is randomly either above or below the root note with the selected interval
   selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedRootNote) + selectedInterval); 
@@ -293,11 +293,11 @@ function selectAndPlayInterval() {
   }
 
   // If selected second note is out of bounds, move both notes down an octave or up an octave
-  if (getNoteNumber(selectedSecondNote) > midCNumber + rootNoteRange) {
+  if (getNoteNumber(selectedSecondNote) > midCNumber + rootNodeRangeInput.value) {
     selectedRootNote = getNoteFromNumber(getNoteNumber(selectedRootNote) - octaveDistance);
     selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedSecondNote) - octaveDistance);
   }
-  else if (getNoteNumber(selectedSecondNote) < midCNumber - rootNoteRange) {
+  else if (getNoteNumber(selectedSecondNote) < midCNumber - rootNodeRangeInput.value) {
     selectedRootNote = getNoteFromNumber(getNoteNumber(selectedRootNote) + octaveDistance);
     selectedSecondNote = getNoteFromNumber(getNoteNumber(selectedSecondNote) + octaveDistance);
   }
