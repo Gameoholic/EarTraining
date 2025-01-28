@@ -1,5 +1,6 @@
 let piano = document.getElementById('piano');
 let pedalButton = document.getElementById('pedal');
+let showPianoButton = document.getElementById('show-piano');
 let playingTechniqueSelect = document.getElementById('playing-technique');
 let intervalStartButton = document.getElementById('interval-start-button');
 let intervalPlayButton = document.getElementById('interval-play-button');
@@ -23,6 +24,7 @@ let interval14Button = document.getElementById('interval-14');
 
 let mouseDown = false;
 let pedalTurnedOn = false;
+let showPianoTurnedOn = false;
 let rootNoteRange = 20;
 let noteDelay = 750; // in milliseconds
 let interval1TurnedOn = false;
@@ -202,6 +204,17 @@ pedalButton.addEventListener('click', () => {
   else {
     pedalButton.classList.remove('on');
     stopAllNotes();
+  }
+});
+
+// Show piano button
+showPianoButton.addEventListener('click', () => {
+  showPianoTurnedOn = !showPianoTurnedOn;
+  if (showPianoTurnedOn) {
+    showPianoButton.classList.add('on');
+  }
+  else {
+    showPianoButton.classList.remove('on');
   }
 });
 
@@ -473,7 +486,9 @@ document.addEventListener('mouseup', function(event) {
 function playNote(note) {
   note.audio.currentTime = 0;
   note.audio.play();
-  note.div.classList.add('active');
+  if (showPianoTurnedOn) {
+    note.div.classList.add('active');
+  }
 
   note.audio.addEventListener('ended', () => { // stop note when audio ended. useful when note not triggered by click
     stopNote(note);
