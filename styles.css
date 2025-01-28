@@ -38,15 +38,6 @@ body {
   background-color: white;
   border: 1px solid #333;
 }
-
-.white.middle-c {
-  background-color: rgb(255, 239, 239);
-}
-
-.white.active {
-  background-color: #CCC;
-}
-
 .black {
   --width: 12px;
   background-color: black;
@@ -54,19 +45,30 @@ body {
   margin-right: calc(var(--width) / -2);
   z-index: 2;
 }
+.white.middle-c {
+  background-color: rgb(255, 239, 239);
+}
 
+.white.active {
+  background-color: #CCC;
+}
 .black.active {
   background-color: #656565;
 }
 
-.key.highlighted {
+.white.highlighted {
   background-color: #00cf1f;
 }
-
-.key.highlighted.active {
+.white.highlighted.active {
   background-color: #00b81c;
 }
 
+.black.highlighted {
+  background-color: #00640f;
+}
+.black.highlighted.active {
+  background-color: #00550d;
+}
 
 .toggle-button {
   background-color: #77767a; /* Green */
