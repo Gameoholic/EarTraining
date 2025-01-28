@@ -6,6 +6,7 @@ let intervalStartButton = document.getElementById('interval-start-button');
 let intervalPlayButton = document.getElementById('interval-play-button');
 let intervalNextButton = document.getElementById('interval-next-button');
 let intervalGuessButtonsDiv = document.getElementById('interval-guess-buttons');
+let randomPlayingTechniqueDirection = document.getElementById('random-playing-technique-direction');
 let interval1Button = document.getElementById('interval-1');
 let interval2Button = document.getElementById('interval-2');
 let interval3Button = document.getElementById('interval-3');
@@ -263,6 +264,9 @@ function selectAndPlayInterval() {
     note.div.classList.remove('highlighted');
   });
 
+  // Hide playing direction text
+  randomPlayingTechniqueDirection.style.opacity = 0;
+
   // Select interval and notes
   selectedRootNote = getRandomNote(rootNoteRange);
   selectedInterval = getRandomInterval();
@@ -354,6 +358,17 @@ function onGuessButtonClicked(intervalGuessButton, guessedInterval) {
     // Play the interval one more time with forced piano even if it's turned off
     stopAllNotes();
     playSelectedInterval(true);
+    
+    // Show playing direction/technique if set to random
+    if (playingTechniqueSelect.options[playingTechniqueSelect.selectedIndex].value == 'random') {
+      randomPlayingTechniqueDirection.style.opacity = 1; // Show it
+      if (selectedRandomPlayingTechnique) {
+        randomPlayingTechniqueDirection.textContent = "Ascending";
+      }
+      else {
+        randomPlayingTechniqueDirection.textContent = "Descending";
+      }
+    }
 
     intervalNextButton.style.display = "inline-block";
     selectedInterval = -1; // Reset
