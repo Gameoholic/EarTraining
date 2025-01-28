@@ -1,5 +1,9 @@
 let piano = document.getElementById('piano');
 let pedalButton = document.getElementById('pedal');
+let intervalStartButton = document.getElementById('interval-start-button');
+let intervalPlayButton = document.getElementById('interval-play-button');
+let intervalNextButton = document.getElementById('interval-next-button');
+let intervalGuessButtonsDiv = document.getElementById('interval-guess-buttons');
 let interval1Button = document.getElementById('interval-1');
 let interval2Button = document.getElementById('interval-2');
 let interval3Button = document.getElementById('interval-3');
@@ -18,6 +22,7 @@ let interval14Button = document.getElementById('interval-14');
 
 let mouseDown = false;
 let pedalTurnedOn = false;
+let rootNoteRange = 20;
 let interval1TurnedOn = false;
 let interval2TurnedOn = false;
 let interval3TurnedOn = false;
@@ -33,6 +38,8 @@ let interval12TurnedOn = false;
 let interval13TurnedOn = false;
 let interval14TurnedOn = false;
 
+let selectedRootNote = -1;
+let selectedInterval = -1; 
 
 
 // Init all notes
@@ -84,6 +91,12 @@ noteNames.forEach(noteName => {
 function getNoteFromName(noteName) {
   return notes.find(function (note) { return note.name == noteName;});
 }
+function getNoteFromNumber(noteNumber) {
+  return notes[noteNumber];
+}
+function getNoteNumber(note) {
+  return notes.indexOf(note);
+}
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive).
@@ -102,17 +115,7 @@ function getRandomNote(noteRangeFromMidC) {
   return notes[notes.indexOf(getNoteFromName('C4')) + getRandomInt(-noteRangeFromMidC, noteRangeFromMidC)];
 }
 
-function playNoteInterval(rootNote, interval) {
-  playNote(notes[notes.indexOf(rootNote) + interval]);
-}
-
-function playNoteIntervalWithDelayAndMode() {
-  const rootNote = getRandomNote(20);
-  playNote(rootNote);
-  playNoteInterval(rootNote, getRandomInterval());
-}
-
-function getRandomInterval() {
+function getAvailableIntervals() {
   let availableIntervals = [];
   if (interval1TurnedOn) {
     availableIntervals.push(1);
@@ -156,16 +159,39 @@ function getRandomInterval() {
   if (interval14TurnedOn) {
     availableIntervals.push(14);
   }
+  return availableIntervals;
+} 
+function getRandomInterval() {
+  const availableIntervals = getAvailableIntervals();
   if (availableIntervals.length > 0)
   {
     return availableIntervals[Math.floor(Math.random() * availableIntervals.length)];
   }
 }
 
-//test btn
-document.getElementById('test').addEventListener('click', () => {
-  playNoteIntervalWithDelayAndMode();
-});
+function getIntervalNameFromNumber(interval) {
+  return ({
+    1: 'Minor 2nd',
+    2: 'Major 2nd',
+    3: 'Minor 3rd',
+    4: 'Major 3rd',
+    5: 'Perfect 4th',
+    6: 'Tritone',
+    7: 'Perfect 5th',
+    8: 'Minor 6th',
+    9: 'Major 6th',
+    10: 'Minor 7th',
+    11: 'Major 7th',
+    12: 'Octave',
+    13: 'Minor 8th',
+    14: 'Major 8th',
+  })[interval] ?? 'None';
+}
+
+// //test btn
+// document.getElementById('test').addEventListener('click', () => {
+//   playNoteIntervalWithDelayAndMode();
+// });
 
 // Pedal button
 pedalButton.addEventListener('click', () => {
@@ -175,12 +201,96 @@ pedalButton.addEventListener('click', () => {
   }
   else {
     pedalButton.classList.remove('on');
-    notes.forEach(note => note.audio.pause());
+    stopAllNotes();
   }
 });
 
-// Interval buttons
+function stopAllNotes() {
+  notes.forEach( note => {
+    note.audio.pause()
+    note.div.classList.remove('active');
+  });
+}
+
+// Interval main buttons
+
+// Interval next button
+intervalNextButton.addEventListener('click', () => {
+  // If no interval has been selected yet OR can generate new one, do it
+  if (selectedInterval == -1 && getAvailableIntervals().length > 0) {
+    selectAndPlayInterval();
+  }
+});
+
+function selectAndPlayInterval() {
+  // Clear existing buttons if there are any
+  while (intervalGuessButtonsDiv.lastElementChild) {
+    intervalGuessButtonsDiv.removeChild(intervalGuessButtonsDiv.lastElementChild);
+  }
+  // Make new ones
+  getAvailableIntervals().forEach(interval => {
+    let intervalGuessButton = document.createElement('button');
+    intervalGuessButton.id = 'interval-button-' + interval;
+    intervalGuessButton.classList.add('interval-guess-button');
+    intervalGuessButton.textContent = getIntervalNameFromNumber(interval);
+    intervalGuessButton.addEventListener('click', () => {
+      onGuessButtonClicked(intervalGuessButton, interval);
+    });
+    intervalGuessButtonsDiv.appendChild(intervalGuessButton);
+  });
+  // Stop all playing sounds if there are any
+  stopAllNotes();
+
+  // Select interval
+  selectedRootNote = getRandomNote(rootNoteRange);
+  selectedInterval = getRandomInterval();
+  playSelectedInterval();
+
+  intervalNextButton.style.display = "none";
+  intervalPlayButton.style.display = "inline-block";
+}
+
+// Start button
+intervalStartButton.addEventListener('click', () => {
+  if (getAvailableIntervals().length > 0) {
+    intervalStartButton.style.display = "none";
+    selectAndPlayInterval();
+  }
+});
+
+// Play button
+intervalPlayButton.addEventListener('click', () => {
+  if (getAvailableIntervals().length > 0) {
+    playSelectedInterval();
+  }
+});
+
+function playSelectedInterval() {
+  playNote(selectedRootNote);
+  let nextNote = getNoteFromNumber(getNoteNumber(selectedRootNote) + selectedInterval); // ascending
+  playNote(nextNote);
+}
+
+// Interval guessed button clicked
+function onGuessButtonClicked(intervalGuessButton, guessedInterval) {
+  if (guessedInterval == selectedInterval) {
+    intervalGuessButton.classList.add('correct');
+    // Disable all buttons
+    for (let guessButton of document.getElementsByClassName('interval-guess-button')) {
+      guessButton.disabled = true;
+    }
+    intervalNextButton.style.display = "inline-block";
+    selectedInterval = -1; // Reset
+  }
+  else {
+    intervalGuessButton.classList.add('incorrect');
+    intervalGuessButton.disabled = true;
+  }
+}
+
+// Interval settings buttons
 interval1Button.addEventListener('click', () => {
+  console.log('hi');
   interval1TurnedOn = !interval1TurnedOn;
   if (interval1TurnedOn) {
     interval1Button.classList.add('on');

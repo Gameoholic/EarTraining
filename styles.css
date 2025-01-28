@@ -70,3 +70,114 @@ body {
 .toggle-button.on {
   background-color: #486243; /* Green */
 }
+
+.interval-button {
+  background-color: #77767a; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 24px;
+}
+
+.interval-button.on {
+  background-color: #486243; /* Green */
+}
+
+
+#interval-settings {
+  margin: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+.interval-button {
+  font-size: 16px;
+  padding: 4px 10px;
+}
+
+#interval-main-buttons {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  margin: 10px;
+}
+
+#interval-guess-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+  gap: 5px;
+}
+
+
+
+.interval-guess-button {
+  background-color: #77767a; /* Green */
+  border: none;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 0px 0px 0px 0px;
+}
+
+.interval-guess-button.correct {
+  background-color: #85e871;
+}
+
+.interval-guess-button.incorrect {
+  background-color: #d23535;
+}
+
+#interval-start-button {
+  background-color: #77767a;
+  border: none;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+#interval-play-button {
+  background-color: #77767a;
+  border: none;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-align: center;
+  text-decoration: none;
+  display: none; /* is hidden to begin with */
+  font-size: 16px;
+}
+
+#interval-next-button {
+  background-color: #77767a;
+  border: none;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-align: center;
+  text-decoration: none;
+  display: none; /* is hidden to begin with */
+  font-size: 16px;
+}
+
+#interval-second-row-buttons {
+  display: flex;
+  gap: 8px;
+}
