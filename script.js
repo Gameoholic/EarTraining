@@ -352,6 +352,7 @@ function onGuessButtonClicked(intervalGuessButton, guessedInterval) {
       guessButton.disabled = true;
     }
     // Play the interval one more time with forced piano even if it's turned off
+    stopAllNotes();
     playSelectedInterval(true);
 
     intervalNextButton.style.display = "inline-block";
