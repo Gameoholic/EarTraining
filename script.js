@@ -255,7 +255,7 @@ function selectAndPlayInterval() {
   // Stop all playing notes if there are any
   stopAllNotes();
   // Unhighlight all highlighted notes
-  notes.forEach( note => {
+  notes.forEach(note => {
     note.div.classList.remove('highlighted');
   });
 
@@ -292,39 +292,46 @@ intervalStartButton.addEventListener('click', () => {
 // Play button
 intervalPlayButton.addEventListener('click', () => {
   if (getAvailableIntervals().length > 0) {
-    playSelectedInterval();
+    // If interval was succesfully guessed, play interval with forced show piano even if it's disabled
+    if (selectedInterval == -1) {
+      playSelectedInterval(true);
+    }
+    else {
+      playSelectedInterval();
+    }
   }
 });
 
-async function playSelectedInterval() {
+// forceshowpiano - whether to force show the notes that are played, even if the setting is disabled. Usually used when interval was already guessed
+async function playSelectedInterval(forceShowPiano = false) {
   let lowerNote = getNoteNumber(selectedSecondNote) > getNoteNumber(selectedRootNote) ? selectedRootNote : selectedSecondNote;
   let higherNote = getNoteNumber(selectedSecondNote) > getNoteNumber(selectedRootNote) ? selectedSecondNote : selectedRootNote;
   switch (playingTechniqueSelect.options[playingTechniqueSelect.selectedIndex].value) {
     case 'ascending':
-      playNote(lowerNote);
+      playNote(lowerNote, forceShowPiano);
       await new Promise(r => setTimeout(r, noteDelay));
-      playNote(higherNote);
+      playNote(higherNote, forceShowPiano);
       break;
     case 'descending':
-      playNote(higherNote);
+      playNote(higherNote, forceShowPiano);
       await new Promise(r => setTimeout(r, noteDelay));
-      playNote(lowerNote);
+      playNote(lowerNote, forceShowPiano);
       break;
     case 'random':
       if (selectedRandomPlayingTechnique) {
-        playNote(lowerNote);
+        playNote(lowerNote, forceShowPiano);
         await new Promise(r => setTimeout(r, noteDelay));
-        playNote(higherNote);
+        playNote(higherNote, forceShowPiano);
       }
       else {
-        playNote(higherNote);
+        playNote(higherNote, forceShowPiano);
         await new Promise(r => setTimeout(r, noteDelay));
-        playNote(lowerNote);
+        playNote(lowerNote, forceShowPiano);
       }
       break;
     case 'harmonic':
-      playNote(lowerNote);
-      playNote(higherNote);
+      playNote(lowerNote, forceShowPiano);
+      playNote(higherNote, forceShowPiano);
       break;
   }
 }
@@ -340,10 +347,11 @@ function onGuessButtonClicked(intervalGuessButton, guessedInterval) {
     for (let guessButton of document.getElementsByClassName('interval-guess-button')) {
       guessButton.disabled = true;
     }
+    // Play the interval one more time with forced piano even if it's turned off
+    playSelectedInterval(true);
+
     intervalNextButton.style.display = "inline-block";
     selectedInterval = -1; // Reset
-    selectedRootNote;
-    selectedSecondNote;
   }
   else {
     intervalGuessButton.classList.add('incorrect');
@@ -491,10 +499,10 @@ document.addEventListener('mouseup', function(event) {
 
 
 // Play notes
-function playNote(note) {
+function playNote(note, forceShowPiano = false) {
   note.audio.currentTime = 0;
   note.audio.play();
-  if (showPianoTurnedOn) {
+  if (showPianoTurnedOn || forceShowPiano) {
     note.div.classList.add('active');
   }
 
