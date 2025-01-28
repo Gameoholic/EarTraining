@@ -1,6 +1,7 @@
 let piano = document.getElementById('piano');
 let pedalButton = document.getElementById('pedal');
 let showPianoButton = document.getElementById('show-piano');
+let showRandomPlayingTechniqueButton = document.getElementById('show-random-playing-technique');
 let playingTechniqueSelect = document.getElementById('playing-technique');
 let intervalStartButton = document.getElementById('interval-start-button');
 let intervalPlayButton = document.getElementById('interval-play-button');
@@ -26,6 +27,7 @@ let interval14Button = document.getElementById('interval-14');
 let mouseDown = false;
 let pedalTurnedOn = false;
 let showPianoTurnedOn = false;
+let showRandomPlayingTechniqueTurnedOn = false;
 let rootNoteRange = 20;
 let noteDelay = 750; // in milliseconds
 let interval1TurnedOn = false;
@@ -223,6 +225,17 @@ showPianoButton.addEventListener('click', () => {
   }
 });
 
+// Show playing technique button
+showRandomPlayingTechniqueButton.addEventListener('click', () => {
+  showRandomPlayingTechniqueTurnedOn = !showRandomPlayingTechniqueTurnedOn;
+  if (showRandomPlayingTechniqueTurnedOn) {
+    showRandomPlayingTechniqueButton.classList.add('on');
+  }
+  else {
+    showRandomPlayingTechniqueButton.classList.remove('on');
+  }
+});
+
 function stopAllNotes() {
   notes.forEach( note => {
     note.audio.pause()
@@ -359,8 +372,9 @@ function onGuessButtonClicked(intervalGuessButton, guessedInterval) {
     stopAllNotes();
     playSelectedInterval(true);
     
-    // Show playing direction/technique if set to random
-    if (playingTechniqueSelect.options[playingTechniqueSelect.selectedIndex].value == 'random') {
+    // Show playing direction/technique if set to random and toggle for it is enabled
+    if (playingTechniqueSelect.options[playingTechniqueSelect.selectedIndex].value == 'random' && 
+      showRandomPlayingTechniqueTurnedOn) {
       randomPlayingTechniqueDirection.style.opacity = 1; // Show it
       if (selectedRandomPlayingTechnique) {
         randomPlayingTechniqueDirection.textContent = "Ascending";
