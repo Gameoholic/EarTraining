@@ -395,7 +395,6 @@ function onGuessButtonClicked(intervalGuessButton, guessedInterval) {
 
 // Interval settings buttons
 interval1Button.addEventListener('click', () => {
-  console.log('hi');
   interval1TurnedOn = !interval1TurnedOn;
   if (interval1TurnedOn) {
     interval1Button.classList.add('on');
