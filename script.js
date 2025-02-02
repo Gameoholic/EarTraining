@@ -250,11 +250,15 @@ function stopAllNotes() {
 
 // Interval next button
 intervalNextButton.addEventListener('click', () => {
+  onIntervalNextButtonClicked();
+});
+
+function onIntervalNextButtonClicked() {
   // If no interval has been selected yet OR can generate new one, do it
   if (selectedInterval == -1 && getAvailableIntervals().length > 0) {
     selectAndPlayInterval();
   }
-});
+}
 
 function selectAndPlayInterval() {
   // Clear existing buttons if there are any
@@ -315,16 +319,45 @@ function selectAndPlayInterval() {
   intervalPlayButton.style.display = "inline-block";
 }
 
-// Start button
-intervalStartButton.addEventListener('click', () => {
-  if (getAvailableIntervals().length > 0) {
-    intervalStartButton.style.display = "none";
-    selectAndPlayInterval();
+// Button keyboard shortcuts
+document.addEventListener("keypress", function(event) {
+  switch (event.key) {
+    case ' ':
+      if (!intervalStartButton.disabled) {
+        onIntervalStartButtonClicked();
+      }
+      else if (!intervalPlayButton.disabled) {
+        onIntervalPlayButtonPlayClicked();
+      }
+      break;
+    case 'Enter':
+      if (!intervalNextButton.disabled) {
+        onIntervalNextButtonClicked();
+      }
+      break;
   }
 });
 
+// Start button
+intervalStartButton.addEventListener('click', () => {
+  onIntervalStartButtonClicked();
+});
+
+function onIntervalStartButtonClicked() {
+  if (getAvailableIntervals().length > 0) {
+    intervalStartButton.style.display = "none";
+    intervalStartButton.disabled = true;
+    selectAndPlayInterval();
+  }
+}
+
 // Play button
 intervalPlayButton.addEventListener('click', () => {
+  onIntervalPlayButtonPlayClicked();
+});
+
+
+function onIntervalPlayButtonPlayClicked() {
   if (getAvailableIntervals().length > 0) {
     // If interval was succesfully guessed, play interval with forced show piano even if it's disabled
     if (selectedInterval == -1) {
@@ -334,7 +367,7 @@ intervalPlayButton.addEventListener('click', () => {
       playSelectedInterval();
     }
   }
-});
+}
 
 // forceshowpiano - whether to force show the notes that are played, even if the setting is disabled. Usually used when interval was already guessed or if pressing key manually
 async function playSelectedInterval(forceShowPiano = false) {

@@ -205,7 +205,6 @@ p {
 
 #random-playing-technique-direction {
   align-items: center;
-  justify-content: center;
   margin: 0px;
   font-size: 12px;
   opacity: 0; /* initially hidden */
