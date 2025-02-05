@@ -369,31 +369,44 @@ function onIntervalPlayButtonPlayClicked() {
   }
 }
 
+let awaitingNotes = [];
+
+// Play notes with cancellation functionality, since can't cancel promises in JS. To cancel all promises just clear the list
+async function awaitPlayNote(note, forceShowPiano, delay) {
+  // Create unique Id
+  let promiseId = Math.random();
+  awaitingNotes.push(promiseId);
+
+  await new Promise(r => setTimeout(r, delay));
+
+  if (awaitingNotes.includes(promiseId)) { // If doesn't it means it was cancelled
+    playNote(note, forceShowPiano);
+    awaitingNotes.splice(awaitingNotes.indexOf(promiseId), 1);
+  }
+}
+
 // forceshowpiano - whether to force show the notes that are played, even if the setting is disabled. Usually used when interval was already guessed or if pressing key manually
-async function playSelectedInterval(forceShowPiano = false) {
+function playSelectedInterval(forceShowPiano = false) {
+  awaitingNotes = []; // Cancel all other awaiting notes, if there are any
   let lowerNote = getNoteNumber(selectedSecondNote) > getNoteNumber(selectedRootNote) ? selectedRootNote : selectedSecondNote;
   let higherNote = getNoteNumber(selectedSecondNote) > getNoteNumber(selectedRootNote) ? selectedSecondNote : selectedRootNote;
   switch (playingTechniqueSelect.options[playingTechniqueSelect.selectedIndex].value) {
     case 'ascending':
       playNote(lowerNote, forceShowPiano);
-      await new Promise(r => setTimeout(r, noteDelay));
-      playNote(higherNote, forceShowPiano);
+      awaitPlayNote(higherNote, forceShowPiano, noteDelay);
       break;
     case 'descending':
       playNote(higherNote, forceShowPiano);
-      await new Promise(r => setTimeout(r, noteDelay));
-      playNote(lowerNote, forceShowPiano);
+      awaitPlayNote(lowerNote, forceShowPiano, noteDelay);
       break;
     case 'random':
       if (selectedRandomPlayingTechnique) {
         playNote(lowerNote, forceShowPiano);
-        await new Promise(r => setTimeout(r, noteDelay));
-        playNote(higherNote, forceShowPiano);
+        awaitPlayNote(higherNote, forceShowPiano, noteDelay);
       }
       else {
         playNote(higherNote, forceShowPiano);
-        await new Promise(r => setTimeout(r, noteDelay));
-        playNote(lowerNote, forceShowPiano);
+        awaitPlayNote(lowerNote, forceShowPiano, noteDelay);
       }
       break;
     case 'harmonic':
